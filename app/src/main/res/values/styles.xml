@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextTitleAlbum">
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">serif</item>
+    </style>
+
+    <style name="TextSectionAlbum">
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">serif</item>
+    </style>
+
+    <style name="TextBodyAlbum">
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">serif</item>
+    </style>
+
+    <style name="TextNoteAlbum">
+        <item name="android:textColor">@color/ink_soft</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">serif</item>
+    </style>
+
+    <style name="ButtonPrimaryAlbum">
+        <item name="android:background">@drawable/bg_button_primary</item>
+        <item name="android:textColor">@color/cream</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <style name="ButtonSecondaryAlbum">
+        <item name="android:background">@drawable/bg_button_secondary</item>
+        <item name="android:textColor">@color/terracotta_dark</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <style name="InputAlbum">
+        <item name="android:background">@drawable/bg_input_paper</item>
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:textColorHint">@color/ink_soft</item>
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+</resources>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_screen_album">
+
+    <LinearLayout
+        android:id="@+id/detailContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="18dp"
+        android:background="@drawable/bg_card_paper"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:padding="18dp">
+
+        <ImageView
+            android:id="@+id/ivStoryImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/story_image"
+            android:background="@color/vintage_bg_deep"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnPrevImage"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_button_secondary"
+                android:contentDescription="@string/prev_image"
+                android:src="@android:drawable/ic_media_previous" />
+
+            <TextView
+                android:id="@+id/tvImageIndex"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="@string/no_image_selected"
+                android:textColor="@color/ink_soft"
+                android:textSize="14sp" />
+
+            <ImageButton
+                android:id="@+id/btnNextImage"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_button_secondary"
+                android:contentDescription="@string/next_image"
+                android:src="@android:drawable/ic_media_next" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvSwipeHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="@string/swipe_hint_default"
+            android:textColor="@color/ink_soft"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnPrevStory"
+                style="@style/ButtonSecondaryAlbum"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="@string/prev_story" />
+
+            <Button
+                android:id="@+id/btnNextStory"
+                style="@style/ButtonSecondaryAlbum"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/next_story" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnToggleFavorite"
+            style="@style/ButtonPrimaryAlbum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="@string/favorite_story" />
+
+        <Button
+            android:id="@+id/btnShareStory"
+            style="@style/ButtonSecondaryAlbum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="@string/share_story" />
+
+        <Button
+            android:id="@+id/btnEditStory"
+            style="@style/ButtonSecondaryAlbum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="@string/edit_story" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="serif"
+            android:text="@string/label_title"
+            android:textColor="@color/ink"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/label_date"
+            android:textColor="@color/ink_soft"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvPlace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/label_place"
+            android:textColor="@color/ink_soft"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvPeople"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/label_people"
+            android:textColor="@color/ink_soft"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvMemoryText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/label_memory"
+            android:textColor="@color/ink"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+</ScrollView>
