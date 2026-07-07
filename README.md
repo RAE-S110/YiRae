@@ -11,7 +11,7 @@ YiRae is an Android photo-memory journal app. It helps users save photos, people
 - Review "On This Day" memories and monthly activity summaries from the home screen
 - Export all stories as Markdown or JSON for backup and sharing
 - Share stories through Android share sheets
-- Store personal settings locally with app lock and privacy-focused behavior
+- Store personal settings locally with privacy-focused behavior
 - Load remote sample content for demo and testing scenarios
 
 ## Product Highlights
@@ -80,4 +80,4 @@ YIRAE_RELEASE_KEY_PASSWORD=your-password
 
 ## Privacy
 
-User nickname, app lock password, and memory content are designed to stay on-device unless the user explicitly shares content.
+User nickname and memory content are designed to stay on-device unless the user explicitly shares content.
