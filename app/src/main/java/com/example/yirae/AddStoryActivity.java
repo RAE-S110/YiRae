@@ -32,6 +32,7 @@ public class AddStoryActivity extends SecureActivity {
     private EditText etTitle;
     private EditText etPlace;
     private EditText etPeople;
+    private EditText etTags;
     private EditText etMemoryText;
     private Button btnSelectDate;
     private Button btnSelectTime;
@@ -80,6 +81,7 @@ public class AddStoryActivity extends SecureActivity {
         etTitle = findViewById(R.id.etTitle);
         etPlace = findViewById(R.id.etPlace);
         etPeople = findViewById(R.id.etPeople);
+        etTags = findViewById(R.id.etTags);
         etMemoryText = findViewById(R.id.etMemoryText);
         btnSelectDate = findViewById(R.id.btnSelectDate);
         btnSelectTime = findViewById(R.id.btnSelectTime);
@@ -122,6 +124,7 @@ public class AddStoryActivity extends SecureActivity {
             intent.putExtra("date", DateTimeUtils.buildStoredDate(selectedDateTime, hasSelectedTime));
             intent.putExtra("place", etPlace.getText().toString().trim());
             intent.putExtra("people", etPeople.getText().toString().trim());
+            intent.putStringArrayListExtra("tags", StoryTagUtils.parseTags(etTags.getText().toString()));
             intent.putExtra("memoryText", etMemoryText.getText().toString().trim());
             intent.putExtra("remoteStoryTitle", currentRemoteStoryTitle);
             intent.putExtra("remoteStoryContent", currentRemoteStoryContent);
@@ -228,6 +231,7 @@ public class AddStoryActivity extends SecureActivity {
         etTitle.setText(getIntent().getStringExtra("title"));
         etPlace.setText(getIntent().getStringExtra("place"));
         etPeople.setText(getIntent().getStringExtra("people"));
+        etTags.setText(StoryTagUtils.joinForInput(getIntent().getStringArrayListExtra("tags")));
         etMemoryText.setText(getIntent().getStringExtra("memoryText"));
         btnSave.setText(R.string.save_changes);
 

@@ -83,6 +83,17 @@ public final class DateTimeUtils {
                 && storyDay.get(Calendar.MONTH) == selectedMonth.get(Calendar.MONTH);
     }
 
+    public static boolean isSameMonthDay(String storedDateTime, Calendar selectedDay) {
+        Calendar storyDay = parseStoredDate(storedDateTime);
+        return storyDay != null
+                && storyDay.get(Calendar.MONTH) == selectedDay.get(Calendar.MONTH)
+                && storyDay.get(Calendar.DAY_OF_MONTH) == selectedDay.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public static String formatDisplayYear(Calendar calendar) {
+        return String.format(LOCALE, "%04d", calendar.get(Calendar.YEAR));
+    }
+
     public static int compareStoredDateDesc(String left, String right) {
         Calendar leftCalendar = parseStoredDate(left);
         Calendar rightCalendar = parseStoredDate(right);

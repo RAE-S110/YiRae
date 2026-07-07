@@ -147,9 +147,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:fontFamily="serif"
-                android:maxLines="2"
+                android:maxLines="3"
                 android:textColor="@color/ink_soft"
                 android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvItemTags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="serif"
+                android:maxLines="1"
+                android:textColor="@color/terracotta_dark"
+                android:textSize="12sp"
+                android:visibility="gone" />
         </LinearLayout>
 
     </LinearLayout>

@@ -40,6 +40,7 @@
     <string name="hint_date">&#x8BF7;&#x8F93;&#x5165;&#x65E5;&#x671F;</string>
     <string name="hint_place">&#x8BF7;&#x8F93;&#x5165;&#x5730;&#x70B9;</string>
     <string name="hint_people">&#x8BF7;&#x8F93;&#x5165;&#x4EBA;&#x7269;</string>
+    <string name="hint_tags">&#x8BF7;&#x8F93;&#x5165;&#x6807;&#x7B7E;&#xFF0C;&#x4F7F;&#x7528;&#x9017;&#x53F7;&#x5206;&#x9694;</string>
     <string name="hint_memory">&#x8BF7;&#x8F93;&#x5165;&#x56DE;&#x5FC6;&#x5185;&#x5BB9;</string>
     <string name="label_pick_date">&#x8BF7;&#x9009;&#x62E9;&#x65E5;&#x671F;&#x4E0E;&#x53EF;&#x9009;&#x65F6;&#x95F4;</string>
     <string name="select_date">&#x9009;&#x62E9;&#x65E5;&#x671F;</string>
@@ -75,11 +76,13 @@
     <string name="label_date">&#x65F6;&#x95F4;&#xFF1A;</string>
     <string name="label_place">&#x5730;&#x70B9;&#xFF1A;</string>
     <string name="label_people">&#x4EBA;&#x7269;&#xFF1A;</string>
+    <string name="label_tags">&#x6807;&#x7B7E;&#xFF1A;</string>
     <string name="label_memory">&#x56DE;&#x5FC6;&#x5185;&#x5BB9;&#xFF1A;</string>
     <string name="no_title">&#x65E0;&#x6807;&#x9898;</string>
     <string name="detail_date">&#x65F6;&#x95F4;&#xFF1A;%1$s</string>
     <string name="detail_place">&#x5730;&#x70B9;&#xFF1A;%1$s</string>
     <string name="detail_people">&#x4EBA;&#x7269;&#xFF1A;%1$s</string>
+    <string name="detail_tags">&#x6807;&#x7B7E;&#xFF1A;%1$s</string>
     <string name="detail_memory">&#x56DE;&#x5FC6;&#x5185;&#x5BB9;&#xFF1A;%1$s</string>
     <string name="all_story_summary">&#x5168;&#x90E8;&#x56DE;&#x5FC6;&#xFF1A;%1$d &#x6761;</string>
     <string name="search_result_summary">&#x641C;&#x7D22;&#x201C;%1$s&#x201D;&#xFF1A;%2$d &#x6761;&#x7ED3;&#x679C;</string>
@@ -92,6 +95,7 @@
     <string name="empty_story_list">&#x8FD8;&#x6CA1;&#x6709;&#x56DE;&#x5FC6;&#xFF0C;&#x53BB;&#x6DFB;&#x52A0;&#x7B2C;&#x4E00;&#x6761;&#x5427;</string>
     <string name="empty_favorite_list">&#x8FD8;&#x6CA1;&#x6709;&#x6536;&#x85CF;&#x7684;&#x56DE;&#x5FC6;</string>
     <string name="empty_search_result">&#x6CA1;&#x6709;&#x627E;&#x5230;&#x5339;&#x914D;&#x7684;&#x56DE;&#x5FC6;</string>
+    <string name="no_tags">&#x6682;&#x65E0;&#x6807;&#x7B7E;</string>
     <string name="story_saved_success">&#x56DE;&#x5FC6;&#x5DF2;&#x4FDD;&#x5B58;</string>
     <string name="favorite_added_success">&#x5DF2;&#x52A0;&#x5165;&#x6536;&#x85CF;</string>
     <string name="favorite_removed_success">&#x5DF2;&#x53D6;&#x6D88;&#x6536;&#x85CF;</string>
@@ -108,4 +112,17 @@
     <string name="error_password_not_match">&#x4E24;&#x6B21;&#x8F93;&#x5165;&#x7684;&#x5BC6;&#x7801;&#x4E0D;&#x4E00;&#x81F4;</string>
     <string name="error_password_incorrect">&#x5BC6;&#x7801;&#x4E0D;&#x6B63;&#x786E;</string>
     <string name="nickname_greeting">&#x4F60;&#x597D;&#xFF0C;%1$s</string>
+    <string name="export_markdown">Markdown &#x5BFC;&#x51FA;</string>
+    <string name="export_json">JSON &#x5BFC;&#x51FA;</string>
+    <string name="export_markdown_success">Markdown &#x5BFC;&#x51FA;&#x5DF2;&#x51C6;&#x5907;&#x597D;</string>
+    <string name="export_json_success">JSON &#x5BFC;&#x51FA;&#x5DF2;&#x51C6;&#x5907;&#x597D;</string>
+    <string name="export_failed">&#x5BFC;&#x51FA;&#x5931;&#x8D25;</string>
+    <string name="review_section_title">&#x56DE;&#x5FC6;&#x56DE;&#x770B;</string>
+    <string name="review_today">&#x67E5;&#x770B;&#x5F80;&#x5E74;&#x4ECA;&#x65E5;</string>
+    <string name="today_review_empty">&#x4ECA;&#x5929;&#x8FD8;&#x6CA1;&#x6709;&#x53EF;&#x56DE;&#x770B;&#x7684;&#x5F80;&#x671F;&#x8BB0;&#x5F55;</string>
+    <string name="today_review_summary">&#x5F80;&#x5E74;&#x4ECA;&#x65E5;&#x5171;&#x6709; %1$d &#x6761;&#x8BB0;&#x5F55;&#xFF0C;&#x6700;&#x65B0;&#x4E00;&#x6761;&#x6765;&#x81EA; %2$s &#x5E74;&#xFF1A;%3$s</string>
+    <string name="today_review_dialog_title">&#x9009;&#x62E9;&#x4E00;&#x6761;&#x5F80;&#x5E74;&#x4ECA;&#x65E5;&#x56DE;&#x5FC6;</string>
+    <string name="month_review_placeholder">&#x672C;&#x6708;&#x56DE;&#x5FC6;&#x52A0;&#x8F7D;&#x4E2D;</string>
+    <string name="month_review_summary">%1$s &#x672C;&#x6708;&#x5171;&#x6709; %2$d &#x6761;&#x56DE;&#x5FC6;&#xFF0C;&#x5176;&#x4E2D; %3$d &#x6761;&#x5DF2;&#x6536;&#x85CF;&#x3002;&#x6700;&#x65B0;&#x4E00;&#x6761;&#xFF1A;%4$s</string>
+    <string name="month_review_empty_title">&#x672C;&#x6708;&#x8FD8;&#x6CA1;&#x6709;&#x56DE;&#x5FC6;</string>
 </resources>

@@ -8,11 +8,19 @@ public interface StoryDao {
 
     PhotoStory addStory(String title, String date, String place, String people, String memoryText, List<String> imageUris);
 
+    PhotoStory addStory(String title, String date, String place, String people, String memoryText, List<String> tags, List<String> imageUris);
+
     PhotoStory addStory(String title, String date, String place, String people, String memoryText, List<String> imageUris, String remoteStoryTitle, String remoteStoryContent, String remoteStoryImageUri);
+
+    PhotoStory addStory(String title, String date, String place, String people, String memoryText, List<String> tags, List<String> imageUris, String remoteStoryTitle, String remoteStoryContent, String remoteStoryImageUri);
 
     PhotoStory updateStory(int storyId, String title, String date, String place, String people, String memoryText, List<String> imageUris);
 
+    PhotoStory updateStory(int storyId, String title, String date, String place, String people, String memoryText, List<String> tags, List<String> imageUris);
+
     PhotoStory updateStory(int storyId, String title, String date, String place, String people, String memoryText, List<String> imageUris, String remoteStoryTitle, String remoteStoryContent, String remoteStoryImageUri);
+
+    PhotoStory updateStory(int storyId, String title, String date, String place, String people, String memoryText, List<String> tags, List<String> imageUris, String remoteStoryTitle, String remoteStoryContent, String remoteStoryImageUri);
 
     PhotoStory findById(int storyId);
 

@@ -101,6 +101,7 @@ public final class StoryShareHelper {
         String date = context.getString(R.string.detail_date, DateTimeUtils.formatDisplay(story.getDate()));
         String place = context.getString(R.string.detail_place, story.getPlace());
         String people = context.getString(R.string.detail_people, story.getPeople());
+        String tags = context.getString(R.string.detail_tags, story.hasTags() ? story.buildTagText() : context.getString(R.string.no_tags));
         String memory = story.getMemoryText().isEmpty() ? context.getString(R.string.no_story_summary) : story.getMemoryText();
         ArrayList<String> storyImages = story.getImageUris();
         boolean hasImage = !storyImages.isEmpty();
@@ -110,6 +111,7 @@ public final class StoryShareHelper {
         List<String> dateLines = wrapText(date, metaPaint, contentWidth);
         List<String> placeLines = wrapText(place, metaPaint, contentWidth);
         List<String> peopleLines = wrapText(people, metaPaint, contentWidth);
+        List<String> tagLines = wrapText(tags, metaPaint, contentWidth);
         List<String> memoryLines = wrapText(memory, bodyPaint, contentWidth);
 
         int imageAreaHeight = resolveImageAreaHeight(storyImages.size());
@@ -122,6 +124,8 @@ public final class StoryShareHelper {
                 + measureBlockHeight(placeLines.size(), metaPaint)
                 + LINE_GAP
                 + measureBlockHeight(peopleLines.size(), metaPaint)
+                + LINE_GAP
+                + measureBlockHeight(tagLines.size(), metaPaint)
                 + PARAGRAPH_GAP
                 + measureBlockHeight(memoryLines.size(), bodyPaint)
                 + (story.isFavorite() ? (SECTION_GAP + 60) : 0)
@@ -154,6 +158,8 @@ public final class StoryShareHelper {
         y = drawLines(canvas, placeLines, x, y, metaPaint);
         y += LINE_GAP;
         y = drawLines(canvas, peopleLines, x, y, metaPaint);
+        y += LINE_GAP;
+        y = drawLines(canvas, tagLines, x, y, metaPaint);
         y += PARAGRAPH_GAP;
         y = drawLines(canvas, memoryLines, x, y, bodyPaint);
 
@@ -319,6 +325,8 @@ public final class StoryShareHelper {
         builder.append(context.getString(R.string.detail_place, story.getPlace()));
         builder.append("\n");
         builder.append(context.getString(R.string.detail_people, story.getPeople()));
+        builder.append("\n");
+        builder.append(context.getString(R.string.detail_tags, story.hasTags() ? story.buildTagText() : context.getString(R.string.no_tags)));
         builder.append("\n\n");
         builder.append(story.getMemoryText());
         return builder.toString();

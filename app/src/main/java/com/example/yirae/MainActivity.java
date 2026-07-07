@@ -14,8 +14,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class MainActivity extends SecureActivity {
     private ListView listViewStories;
@@ -23,7 +24,12 @@ public class MainActivity extends SecureActivity {
     private TextView tvNickname;
     private TextView tvSearchSummary;
     private TextView tvEmptyState;
+    private TextView tvTodayReviewSummary;
+    private TextView tvMonthReviewSummary;
     private Button btnAddStory;
+    private Button btnExportMarkdown;
+    private Button btnExportJson;
+    private Button btnReviewToday;
     private ImageButton btnCalendar;
     private Button btnFavoriteStories;
     private Button btnSettings;
@@ -46,6 +52,7 @@ public class MainActivity extends SecureActivity {
                         data.getStringExtra("place"),
                         data.getStringExtra("people"),
                         data.getStringExtra("memoryText"),
+                        data.getStringArrayListExtra("tags"),
                         data.getStringArrayListExtra("imageUris"),
                         data.getStringExtra("remoteStoryTitle"),
                         data.getStringExtra("remoteStoryContent"),
@@ -72,7 +79,12 @@ public class MainActivity extends SecureActivity {
         tvNickname = findViewById(R.id.tvNickname);
         tvSearchSummary = findViewById(R.id.tvSearchSummary);
         tvEmptyState = findViewById(R.id.tvEmptyState);
+        tvTodayReviewSummary = findViewById(R.id.tvTodayReviewSummary);
+        tvMonthReviewSummary = findViewById(R.id.tvMonthReviewSummary);
         btnAddStory = findViewById(R.id.btnAddStory);
+        btnExportMarkdown = findViewById(R.id.btnExportMarkdown);
+        btnExportJson = findViewById(R.id.btnExportJson);
+        btnReviewToday = findViewById(R.id.btnReviewToday);
         btnCalendar = findViewById(R.id.btnCalendar);
         btnFavoriteStories = findViewById(R.id.btnFavoriteStories);
         btnSettings = findViewById(R.id.btnSettings);
@@ -114,6 +126,9 @@ public class MainActivity extends SecureActivity {
             showingFavoritesOnly = !showingFavoritesOnly;
             refreshStoryList();
         });
+        btnExportMarkdown.setOnClickListener(v -> exportStories(true));
+        btnExportJson.setOnClickListener(v -> exportStories(false));
+        btnReviewToday.setOnClickListener(v -> showTodayReviewDialog());
         btnSettings.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
         btnSearch.setOnClickListener(v -> refreshStoryList());
 
@@ -147,6 +162,7 @@ public class MainActivity extends SecureActivity {
         adapter.submitList(displayedStories);
         btnFavoriteStories.setText(showingFavoritesOnly ? R.string.view_all_stories : R.string.favorite_stories);
         updateEmptyState(allStories);
+        updateReviewSummary(allStories);
         if (showingFavoritesOnly && keyword.isEmpty()) {
             tvSearchSummary.setText(getString(R.string.favorite_story_summary, displayedStories.size()));
         } else if (keyword.isEmpty()) {
@@ -154,6 +170,106 @@ public class MainActivity extends SecureActivity {
         } else {
             tvSearchSummary.setText(getString(R.string.search_result_summary, keyword, displayedStories.size()));
         }
+    }
+
+    private void updateReviewSummary(List<PhotoStory> allStories) {
+        Calendar today = Calendar.getInstance();
+        ArrayList<PhotoStory> sameDayStories = new ArrayList<>();
+        int monthStoryCount = 0;
+        int monthFavoriteCount = 0;
+        PhotoStory latestMonthStory = null;
+
+        for (PhotoStory story : allStories) {
+            if (DateTimeUtils.isSameMonthDay(story.getDate(), today)) {
+                sameDayStories.add(story);
+            }
+            if (DateTimeUtils.isSameMonth(story.getDate(), today)) {
+                monthStoryCount++;
+                if (story.isFavorite()) {
+                    monthFavoriteCount++;
+                }
+                if (latestMonthStory == null || DateTimeUtils.compareStoredDateDesc(story.getDate(), latestMonthStory.getDate()) < 0) {
+                    latestMonthStory = story;
+                }
+            }
+        }
+
+        Collections.sort(sameDayStories, (left, right) -> DateTimeUtils.compareStoredDateDesc(left.getDate(), right.getDate()));
+        if (sameDayStories.isEmpty()) {
+            tvTodayReviewSummary.setText(R.string.today_review_empty);
+            btnReviewToday.setEnabled(false);
+            btnReviewToday.setAlpha(0.5f);
+        } else {
+            PhotoStory latest = sameDayStories.get(0);
+            Calendar storyDate = DateTimeUtils.parseStoredDate(latest.getDate());
+            String latestYear = storyDate == null ? "" : DateTimeUtils.formatDisplayYear(storyDate);
+            tvTodayReviewSummary.setText(getString(
+                    R.string.today_review_summary,
+                    sameDayStories.size(),
+                    latestYear,
+                    latest.getTitle().isEmpty() ? getString(R.string.no_title) : latest.getTitle()
+            ));
+            btnReviewToday.setEnabled(true);
+            btnReviewToday.setAlpha(1f);
+        }
+
+        String latestMonthTitle = latestMonthStory == null || latestMonthStory.getTitle().isEmpty()
+                ? getString(R.string.no_title)
+                : latestMonthStory.getTitle();
+        tvMonthReviewSummary.setText(getString(
+                R.string.month_review_summary,
+                DateTimeUtils.formatDisplayMonth(today),
+                monthStoryCount,
+                monthFavoriteCount,
+                monthStoryCount == 0 ? getString(R.string.month_review_empty_title) : latestMonthTitle
+        ));
+    }
+
+    private void showTodayReviewDialog() {
+        ArrayList<PhotoStory> reviewStories = new ArrayList<>();
+        Calendar today = Calendar.getInstance();
+        for (PhotoStory story : StoryRepository.getStories()) {
+            if (DateTimeUtils.isSameMonthDay(story.getDate(), today)) {
+                reviewStories.add(story);
+            }
+        }
+
+        if (reviewStories.isEmpty()) {
+            Toast.makeText(this, R.string.today_review_empty, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Collections.sort(reviewStories, (left, right) -> DateTimeUtils.compareStoredDateDesc(left.getDate(), right.getDate()));
+        CharSequence[] items = new CharSequence[reviewStories.size()];
+        for (int i = 0; i < reviewStories.size(); i++) {
+            PhotoStory story = reviewStories.get(i);
+            Calendar storyDate = DateTimeUtils.parseStoredDate(story.getDate());
+            String year = storyDate == null ? "" : DateTimeUtils.formatDisplayYear(storyDate);
+            items[i] = year + " - " + (story.getTitle().isEmpty() ? getString(R.string.no_title) : story.getTitle());
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.today_review_dialog_title)
+                .setItems(items, (dialog, which) -> openDetailFromStories(reviewStories, reviewStories.get(which)))
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void exportStories(boolean markdown) {
+        List<PhotoStory> stories = StoryRepository.getStories();
+        if (stories.isEmpty()) {
+            Toast.makeText(this, R.string.empty_story_list, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        boolean exported = markdown
+                ? StoryExportHelper.exportStoriesAsMarkdown(this, stories)
+                : StoryExportHelper.exportStoriesAsJson(this, stories);
+        Toast.makeText(
+                this,
+                exported ? (markdown ? R.string.export_markdown_success : R.string.export_json_success) : R.string.export_failed,
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     private void updateEmptyState(List<PhotoStory> allStories) {
@@ -191,11 +307,15 @@ public class MainActivity extends SecureActivity {
 
     private void openDetail(PhotoStory story) {
         adapter.closeOpenedItem();
-        int[] storyIds = new int[displayedStories.size()];
+        openDetailFromStories(displayedStories, story);
+    }
+
+    private void openDetailFromStories(List<PhotoStory> stories, PhotoStory selectedStory) {
+        int[] storyIds = new int[stories.size()];
         int currentIndex = 0;
-        for (int i = 0; i < displayedStories.size(); i++) {
-            storyIds[i] = displayedStories.get(i).getId();
-            if (displayedStories.get(i).getId() == story.getId()) {
+        for (int i = 0; i < stories.size(); i++) {
+            storyIds[i] = stories.get(i).getId();
+            if (stories.get(i).getId() == selectedStory.getId()) {
                 currentIndex = i;
             }
         }

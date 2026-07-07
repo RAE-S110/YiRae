@@ -18,6 +18,7 @@ public class SQLiteStoryDao implements StoryDao {
             StoryDatabaseHelper.COLUMN_PLACE,
             StoryDatabaseHelper.COLUMN_PEOPLE,
             StoryDatabaseHelper.COLUMN_MEMORY_TEXT,
+            StoryDatabaseHelper.COLUMN_TAGS,
             StoryDatabaseHelper.COLUMN_IMAGE_URIS,
             StoryDatabaseHelper.COLUMN_FAVORITE,
             StoryDatabaseHelper.COLUMN_REMOTE_STORY_TITLE,
@@ -53,16 +54,26 @@ public class SQLiteStoryDao implements StoryDao {
 
     @Override
     public PhotoStory addStory(String title, String date, String place, String people, String memoryText, List<String> imageUris) {
-        return addStory(title, date, place, people, memoryText, imageUris, "", "", "");
+        return addStory(title, date, place, people, memoryText, new ArrayList<>(), imageUris, "", "", "");
+    }
+
+    @Override
+    public PhotoStory addStory(String title, String date, String place, String people, String memoryText, List<String> tags, List<String> imageUris) {
+        return addStory(title, date, place, people, memoryText, tags, imageUris, "", "", "");
     }
 
     @Override
     public PhotoStory addStory(String title, String date, String place, String people, String memoryText, List<String> imageUris, String remoteStoryTitle, String remoteStoryContent, String remoteStoryImageUri) {
+        return addStory(title, date, place, people, memoryText, new ArrayList<>(), imageUris, remoteStoryTitle, remoteStoryContent, remoteStoryImageUri);
+    }
+
+    @Override
+    public PhotoStory addStory(String title, String date, String place, String people, String memoryText, List<String> tags, List<String> imageUris, String remoteStoryTitle, String remoteStoryContent, String remoteStoryImageUri) {
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         long id = db.insert(
                 StoryDatabaseHelper.TABLE_STORIES,
                 null,
-                buildValues(title, date, place, people, memoryText, imageUris, false, remoteStoryTitle, remoteStoryContent, remoteStoryImageUri)
+                buildValues(title, date, place, people, memoryText, tags, imageUris, false, remoteStoryTitle, remoteStoryContent, remoteStoryImageUri)
         );
 
         if (id == -1) {
@@ -73,11 +84,21 @@ public class SQLiteStoryDao implements StoryDao {
 
     @Override
     public PhotoStory updateStory(int storyId, String title, String date, String place, String people, String memoryText, List<String> imageUris) {
-        return updateStory(storyId, title, date, place, people, memoryText, imageUris, "", "", "");
+        return updateStory(storyId, title, date, place, people, memoryText, new ArrayList<>(), imageUris, "", "", "");
+    }
+
+    @Override
+    public PhotoStory updateStory(int storyId, String title, String date, String place, String people, String memoryText, List<String> tags, List<String> imageUris) {
+        return updateStory(storyId, title, date, place, people, memoryText, tags, imageUris, "", "", "");
     }
 
     @Override
     public PhotoStory updateStory(int storyId, String title, String date, String place, String people, String memoryText, List<String> imageUris, String remoteStoryTitle, String remoteStoryContent, String remoteStoryImageUri) {
+        return updateStory(storyId, title, date, place, people, memoryText, new ArrayList<>(), imageUris, remoteStoryTitle, remoteStoryContent, remoteStoryImageUri);
+    }
+
+    @Override
+    public PhotoStory updateStory(int storyId, String title, String date, String place, String people, String memoryText, List<String> tags, List<String> imageUris, String remoteStoryTitle, String remoteStoryContent, String remoteStoryImageUri) {
         PhotoStory existingStory = findById(storyId);
         if (existingStory == null) {
             return null;
@@ -86,7 +107,7 @@ public class SQLiteStoryDao implements StoryDao {
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         int updatedRows = db.update(
                 StoryDatabaseHelper.TABLE_STORIES,
-                buildValues(title, date, place, people, memoryText, imageUris, existingStory.isFavorite(), remoteStoryTitle, remoteStoryContent, remoteStoryImageUri),
+                buildValues(title, date, place, people, memoryText, tags, imageUris, existingStory.isFavorite(), remoteStoryTitle, remoteStoryContent, remoteStoryImageUri),
                 StoryDatabaseHelper.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(storyId)}
         );
@@ -160,13 +181,14 @@ public class SQLiteStoryDao implements StoryDao {
         return result;
     }
 
-    private ContentValues buildValues(String title, String date, String place, String people, String memoryText, List<String> imageUris, boolean favorite, String remoteStoryTitle, String remoteStoryContent, String remoteStoryImageUri) {
+    private ContentValues buildValues(String title, String date, String place, String people, String memoryText, List<String> tags, List<String> imageUris, boolean favorite, String remoteStoryTitle, String remoteStoryContent, String remoteStoryImageUri) {
         ContentValues values = new ContentValues();
         values.put(StoryDatabaseHelper.COLUMN_TITLE, safe(title));
         values.put(StoryDatabaseHelper.COLUMN_DATE, safe(date));
         values.put(StoryDatabaseHelper.COLUMN_PLACE, safe(place));
         values.put(StoryDatabaseHelper.COLUMN_PEOPLE, safe(people));
         values.put(StoryDatabaseHelper.COLUMN_MEMORY_TEXT, safe(memoryText));
+        values.put(StoryDatabaseHelper.COLUMN_TAGS, encodeValues(tags));
         values.put(StoryDatabaseHelper.COLUMN_IMAGE_URIS, encodeImageUris(imageUris));
         values.put(StoryDatabaseHelper.COLUMN_FAVORITE, favorite ? 1 : 0);
         values.put(StoryDatabaseHelper.COLUMN_REMOTE_STORY_TITLE, safe(remoteStoryTitle));
@@ -183,6 +205,7 @@ public class SQLiteStoryDao implements StoryDao {
                 cursor.getString(cursor.getColumnIndexOrThrow(StoryDatabaseHelper.COLUMN_PLACE)),
                 cursor.getString(cursor.getColumnIndexOrThrow(StoryDatabaseHelper.COLUMN_PEOPLE)),
                 cursor.getString(cursor.getColumnIndexOrThrow(StoryDatabaseHelper.COLUMN_MEMORY_TEXT)),
+                decodeValues(cursor.getString(cursor.getColumnIndexOrThrow(StoryDatabaseHelper.COLUMN_TAGS))),
                 decodeImageUris(cursor.getString(cursor.getColumnIndexOrThrow(StoryDatabaseHelper.COLUMN_IMAGE_URIS))),
                 cursor.getInt(cursor.getColumnIndexOrThrow(StoryDatabaseHelper.COLUMN_FAVORITE)) == 1,
                 cursor.getString(cursor.getColumnIndexOrThrow(StoryDatabaseHelper.COLUMN_REMOTE_STORY_TITLE)),
@@ -196,20 +219,28 @@ public class SQLiteStoryDao implements StoryDao {
     }
 
     private String encodeImageUris(List<String> imageUris) {
+        return encodeValues(imageUris);
+    }
+
+    private String encodeValues(List<String> values) {
         JSONArray jsonArray = new JSONArray();
-        if (imageUris == null) {
+        if (values == null) {
             return jsonArray.toString();
         }
 
-        for (String imageUri : imageUris) {
-            if (imageUri != null && !imageUri.isEmpty()) {
-                jsonArray.put(imageUri);
+        for (String value : values) {
+            if (value != null && !value.isEmpty()) {
+                jsonArray.put(value);
             }
         }
         return jsonArray.toString();
     }
 
     private ArrayList<String> decodeImageUris(String value) {
+        return decodeValues(value);
+    }
+
+    private ArrayList<String> decodeValues(String value) {
         ArrayList<String> imageUris = new ArrayList<>();
         if (value == null || value.isEmpty()) {
             return imageUris;

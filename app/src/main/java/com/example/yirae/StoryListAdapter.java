@@ -92,6 +92,12 @@ public class StoryListAdapter extends BaseAdapter {
 
         String subtitle = story.buildSubtitle();
         holder.subtitle.setText(subtitle.isEmpty() ? parent.getContext().getString(R.string.no_story_summary) : subtitle);
+        if (story.hasTags()) {
+            holder.tags.setText(story.buildTagText());
+            holder.tags.setVisibility(View.VISIBLE);
+        } else {
+            holder.tags.setVisibility(View.GONE);
+        }
         holder.favoriteBadge.setVisibility(story.isFavorite() ? View.VISIBLE : View.GONE);
         holder.foreground.setAlpha(1f);
 
@@ -193,6 +199,7 @@ public class StoryListAdapter extends BaseAdapter {
         private final TextView swipeFavoriteLabel;
         private final TextView title;
         private final TextView subtitle;
+        private final TextView tags;
 
         private ViewHolder(View view) {
             foreground = view.findViewById(R.id.storyForeground);
@@ -205,6 +212,7 @@ public class StoryListAdapter extends BaseAdapter {
             swipeFavoriteLabel = view.findViewById(R.id.tvSwipeFavoriteLabel);
             title = view.findViewById(R.id.tvItemTitle);
             subtitle = view.findViewById(R.id.tvItemSubtitle);
+            tags = view.findViewById(R.id.tvItemTags);
         }
     }
 }

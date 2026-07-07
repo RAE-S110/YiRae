@@ -10,6 +10,7 @@ public class PhotoStory {
     private final String place;
     private final String people;
     private final String memoryText;
+    private final ArrayList<String> tags;
     private final ArrayList<String> imageUris;
     private final boolean favorite;
     private final String remoteStoryTitle;
@@ -17,17 +18,22 @@ public class PhotoStory {
     private final String remoteStoryImageUri;
 
     public PhotoStory(int id, String title, String date, String place, String people, String memoryText, List<String> imageUris, boolean favorite) {
-        this(id, title, date, place, people, memoryText, imageUris, favorite, "", "", "");
+        this(id, title, date, place, people, memoryText, new ArrayList<>(), imageUris, favorite, "", "", "");
     }
 
     public PhotoStory(int id, String title, String date, String place, String people, String memoryText, List<String> imageUris, boolean favorite, String remoteStoryTitle, String remoteStoryContent, String remoteStoryImageUri) {
+        this(id, title, date, place, people, memoryText, new ArrayList<>(), imageUris, favorite, remoteStoryTitle, remoteStoryContent, remoteStoryImageUri);
+    }
+
+    public PhotoStory(int id, String title, String date, String place, String people, String memoryText, List<String> tags, List<String> imageUris, boolean favorite, String remoteStoryTitle, String remoteStoryContent, String remoteStoryImageUri) {
         this.id = id;
         this.title = title;
         this.date = date;
         this.place = place;
         this.people = people;
         this.memoryText = memoryText;
-        this.imageUris = new ArrayList<>(imageUris);
+        this.tags = tags == null ? new ArrayList<>() : new ArrayList<>(tags);
+        this.imageUris = imageUris == null ? new ArrayList<>() : new ArrayList<>(imageUris);
         this.favorite = favorite;
         this.remoteStoryTitle = remoteStoryTitle == null ? "" : remoteStoryTitle;
         this.remoteStoryContent = remoteStoryContent == null ? "" : remoteStoryContent;
@@ -58,6 +64,10 @@ public class PhotoStory {
         return memoryText;
     }
 
+    public ArrayList<String> getTags() {
+        return new ArrayList<>(tags);
+    }
+
     public ArrayList<String> getImageUris() {
         return new ArrayList<>(imageUris);
     }
@@ -86,17 +96,31 @@ public class PhotoStory {
         return imageUris.isEmpty() ? "" : imageUris.get(0);
     }
 
+    public boolean hasTags() {
+        return !tags.isEmpty();
+    }
+
+    public String buildTagText() {
+        return StoryTagUtils.buildDisplayText(tags);
+    }
+
     public boolean matchesKeyword(String keyword) {
-        if (keyword == null || keyword.trim().isEmpty()) {
+        List<String> tokens = StoryTagUtils.splitKeywordTokens(keyword);
+        if (tokens.isEmpty()) {
             return true;
         }
 
-        String normalizedKeyword = keyword.trim().toLowerCase();
-        return contains(title, normalizedKeyword)
-                || contains(date, normalizedKeyword)
-                || contains(place, normalizedKeyword)
-                || contains(people, normalizedKeyword)
-                || contains(memoryText, normalizedKeyword);
+        for (String token : tokens) {
+            if (!contains(title, token)
+                    && !contains(date, token)
+                    && !contains(place, token)
+                    && !contains(people, token)
+                    && !contains(memoryText, token)
+                    && !StoryTagUtils.containsTag(tags, token)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public String buildSubtitle() {
@@ -104,7 +128,6 @@ public class PhotoStory {
         appendPart(builder, DateTimeUtils.formatDisplay(date));
         appendPart(builder, place);
         appendPart(builder, people);
-
         if (memoryText != null && !memoryText.isEmpty()) {
             if (builder.length() > 0) {
                 builder.append(" | ");

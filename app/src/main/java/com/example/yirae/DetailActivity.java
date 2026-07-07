@@ -26,6 +26,7 @@ public class DetailActivity extends SecureActivity {
     private TextView tvDate;
     private TextView tvPlace;
     private TextView tvPeople;
+    private TextView tvTags;
     private TextView tvMemoryText;
     private TextView tvSwipeHint;
     private TextView tvImageIndex;
@@ -61,6 +62,7 @@ public class DetailActivity extends SecureActivity {
                         data.getStringExtra("place"),
                         data.getStringExtra("people"),
                         data.getStringExtra("memoryText"),
+                        data.getStringArrayListExtra("tags"),
                         data.getStringArrayListExtra("imageUris"),
                         data.getStringExtra("remoteStoryTitle"),
                         data.getStringExtra("remoteStoryContent"),
@@ -85,6 +87,7 @@ public class DetailActivity extends SecureActivity {
         tvDate = findViewById(R.id.tvDate);
         tvPlace = findViewById(R.id.tvPlace);
         tvPeople = findViewById(R.id.tvPeople);
+        tvTags = findViewById(R.id.tvTags);
         tvMemoryText = findViewById(R.id.tvMemoryText);
         tvSwipeHint = findViewById(R.id.tvSwipeHint);
         tvImageIndex = findViewById(R.id.tvImageIndex);
@@ -162,6 +165,7 @@ public class DetailActivity extends SecureActivity {
         tvDate.setText(getString(R.string.detail_date, DateTimeUtils.formatDisplay(story.getDate())));
         tvPlace.setText(getString(R.string.detail_place, story.getPlace()));
         tvPeople.setText(getString(R.string.detail_people, story.getPeople()));
+        tvTags.setText(getString(R.string.detail_tags, story.hasTags() ? story.buildTagText() : getString(R.string.no_tags)));
         tvMemoryText.setText(getString(R.string.detail_memory, story.getMemoryText()));
         tvSwipeHint.setText(getString(R.string.swipe_hint, currentIndex + 1, stories.size()));
         btnToggleFavorite.setText(story.isFavorite() ? R.string.unfavorite_story : R.string.favorite_story);
@@ -193,6 +197,7 @@ public class DetailActivity extends SecureActivity {
             intent.putExtra("date", story.getDate());
             intent.putExtra("place", story.getPlace());
             intent.putExtra("people", story.getPeople());
+            intent.putStringArrayListExtra("tags", story.getTags());
             intent.putExtra("memoryText", story.getMemoryText());
             intent.putExtra("remoteStoryTitle", story.getRemoteStoryTitle());
             intent.putExtra("remoteStoryContent", story.getRemoteStoryContent());

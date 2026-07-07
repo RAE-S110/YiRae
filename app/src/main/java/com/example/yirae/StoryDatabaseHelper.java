@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class StoryDatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "yirae_stories.db";
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
 
     public static final String TABLE_STORIES = "stories";
     public static final String COLUMN_ID = "_id";
@@ -15,6 +15,7 @@ public class StoryDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_PLACE = "place";
     public static final String COLUMN_PEOPLE = "people";
     public static final String COLUMN_MEMORY_TEXT = "memory_text";
+    public static final String COLUMN_TAGS = "tags";
     public static final String COLUMN_IMAGE_URIS = "image_uris";
     public static final String COLUMN_FAVORITE = "favorite";
     public static final String COLUMN_REMOTE_STORY_TITLE = "remote_story_title";
@@ -29,6 +30,7 @@ public class StoryDatabaseHelper extends SQLiteOpenHelper {
                     + COLUMN_PLACE + " TEXT NOT NULL, "
                     + COLUMN_PEOPLE + " TEXT NOT NULL, "
                     + COLUMN_MEMORY_TEXT + " TEXT NOT NULL, "
+                    + COLUMN_TAGS + " TEXT NOT NULL DEFAULT '[]', "
                     + COLUMN_IMAGE_URIS + " TEXT NOT NULL, "
                     + COLUMN_FAVORITE + " INTEGER NOT NULL DEFAULT 0, "
                     + COLUMN_REMOTE_STORY_TITLE + " TEXT NOT NULL DEFAULT '', "
@@ -51,6 +53,9 @@ public class StoryDatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("ALTER TABLE " + TABLE_STORIES + " ADD COLUMN " + COLUMN_REMOTE_STORY_TITLE + " TEXT NOT NULL DEFAULT ''");
             db.execSQL("ALTER TABLE " + TABLE_STORIES + " ADD COLUMN " + COLUMN_REMOTE_STORY_CONTENT + " TEXT NOT NULL DEFAULT ''");
             db.execSQL("ALTER TABLE " + TABLE_STORIES + " ADD COLUMN " + COLUMN_REMOTE_STORY_IMAGE_URI + " TEXT NOT NULL DEFAULT ''");
+        }
+        if (oldVersion < 3) {
+            db.execSQL("ALTER TABLE " + TABLE_STORIES + " ADD COLUMN " + COLUMN_TAGS + " TEXT NOT NULL DEFAULT '[]'");
         }
     }
 }
