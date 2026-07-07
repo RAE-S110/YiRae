@@ -1,10 +1,14 @@
 package com.example.yirae;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.net.Uri;
 
 import com.google.gson.Gson;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -14,6 +18,12 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class NetworkStoryRepository {
+    public interface RemoteImageCallback {
+        void onSuccess(String localUriString);
+
+        void onError(String message);
+    }
+
     public interface RemoteStoryCallback {
         void onSuccess(RemoteStory story);
 
@@ -58,6 +68,51 @@ public class NetworkStoryRepository {
                     mainHandler.post(() -> callback.onSuccess(story));
                 } catch (Exception e) {
                     postFallbackStory(callback);
+                }
+            }
+        });
+    }
+
+    public void cacheRemoteImage(Context context, String imageUrl, RemoteImageCallback callback) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            mainHandler.post(() -> callback.onError("empty image url"));
+            return;
+        }
+
+        Request request = new Request.Builder()
+                .url(imageUrl)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                try (Response responseToClose = response) {
+                    if (!responseToClose.isSuccessful() || responseToClose.body() == null) {
+                        mainHandler.post(() -> callback.onError("image download failed"));
+                        return;
+                    }
+
+                    File imageDir = new File(context.getCacheDir(), "remote_images");
+                    if (!imageDir.exists() && !imageDir.mkdirs()) {
+                        mainHandler.post(() -> callback.onError("cache dir unavailable"));
+                        return;
+                    }
+
+                    File outputFile = new File(imageDir, "remote_" + System.currentTimeMillis() + ".jpg");
+                    try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+                        outputStream.write(responseToClose.body().bytes());
+                        outputStream.flush();
+                    }
+
+                    String localUri = Uri.fromFile(outputFile).toString();
+                    mainHandler.post(() -> callback.onSuccess(localUri));
+                } catch (Exception e) {
+                    mainHandler.post(() -> callback.onError(e.getMessage()));
                 }
             }
         });

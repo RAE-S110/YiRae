@@ -187,23 +187,39 @@ public class AddStoryActivity extends SecureActivity {
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        tvRemoteStoryStatus.setText(R.string.remote_story_loaded);
+                        tvRemoteStoryStatus.setText(getString(R.string.remote_story_failed, "image preview failed"));
                         return false;
                     }
 
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        addRemoteImageIfNeeded(imageUrl);
+                        cacheRemoteImageForStory(imageUrl);
                         return false;
                     }
                 })
                 .into(ivRemoteStoryImage);
     }
 
-    private void addRemoteImageIfNeeded(String imageUrl) {
-        currentRemoteStoryImageUri = imageUrl;
-        if (!selectedImageUris.contains(imageUrl)) {
-            selectedImageUris.add(imageUrl);
+    private void cacheRemoteImageForStory(String imageUrl) {
+        networkStoryRepository.cacheRemoteImage(this, imageUrl, new NetworkStoryRepository.RemoteImageCallback() {
+            @Override
+            public void onSuccess(String localUriString) {
+                addRemoteImageIfNeeded(localUriString);
+                tvRemoteStoryStatus.setText(R.string.remote_story_loaded);
+            }
+
+            @Override
+            public void onError(String message) {
+                String safeMessage = message == null || message.isEmpty() ? "image cache failed" : message;
+                tvRemoteStoryStatus.setText(getString(R.string.remote_story_failed, safeMessage));
+            }
+        });
+    }
+
+    private void addRemoteImageIfNeeded(String localUriString) {
+        currentRemoteStoryImageUri = localUriString;
+        if (!selectedImageUris.contains(localUriString)) {
+            selectedImageUris.add(localUriString);
             updateSelectedImageText();
         }
     }
