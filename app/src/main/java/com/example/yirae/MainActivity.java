@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,9 +12,10 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 
 public class MainActivity extends SecureActivity {
     private ListView listViewStories;
@@ -22,7 +24,7 @@ public class MainActivity extends SecureActivity {
     private TextView tvSearchSummary;
     private TextView tvEmptyState;
     private Button btnAddStory;
-    private Button btnCalendar;
+    private ImageButton btnCalendar;
     private Button btnFavoriteStories;
     private Button btnSettings;
     private Button btnSearch;
@@ -44,7 +46,10 @@ public class MainActivity extends SecureActivity {
                         data.getStringExtra("place"),
                         data.getStringExtra("people"),
                         data.getStringExtra("memoryText"),
-                        data.getStringArrayListExtra("imageUris")
+                        data.getStringArrayListExtra("imageUris"),
+                        data.getStringExtra("remoteStoryTitle"),
+                        data.getStringExtra("remoteStoryContent"),
+                        data.getStringExtra("remoteStoryImageUri")
                 );
                 Toast.makeText(MainActivity.this, R.string.story_saved_success, Toast.LENGTH_SHORT).show();
                 refreshStoryList();
@@ -77,6 +82,23 @@ public class MainActivity extends SecureActivity {
             @Override
             public void onStorySelected(PhotoStory story) {
                 openDetail(story);
+            }
+
+            @Override
+            public void onStoryFavoriteToggle(PhotoStory story) {
+                boolean favorite = !story.isFavorite();
+                StoryRepository.setFavorite(MainActivity.this, story.getId(), favorite);
+                Toast.makeText(
+                        MainActivity.this,
+                        favorite ? R.string.favorite_added_success : R.string.favorite_removed_success,
+                        Toast.LENGTH_SHORT
+                ).show();
+                refreshStoryList();
+            }
+
+            @Override
+            public void onStoryShare(PhotoStory story) {
+                StoryShareHelper.shareStory(MainActivity.this, story);
             }
 
             @Override
@@ -125,7 +147,6 @@ public class MainActivity extends SecureActivity {
         adapter.submitList(displayedStories);
         btnFavoriteStories.setText(showingFavoritesOnly ? R.string.view_all_stories : R.string.favorite_stories);
         updateEmptyState(allStories);
-
         if (showingFavoritesOnly && keyword.isEmpty()) {
             tvSearchSummary.setText(getString(R.string.favorite_story_summary, displayedStories.size()));
         } else if (keyword.isEmpty()) {

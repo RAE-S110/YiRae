@@ -1,6 +1,5 @@
 package com.example.yirae;
 
-import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +14,9 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class DetailActivity extends SecureActivity {
@@ -59,7 +61,10 @@ public class DetailActivity extends SecureActivity {
                         data.getStringExtra("place"),
                         data.getStringExtra("people"),
                         data.getStringExtra("memoryText"),
-                        data.getStringArrayListExtra("imageUris")
+                        data.getStringArrayListExtra("imageUris"),
+                        data.getStringExtra("remoteStoryTitle"),
+                        data.getStringExtra("remoteStoryContent"),
+                        data.getStringExtra("remoteStoryImageUri")
                 );
 
                 stories = StoryRepository.getStoriesByIds(getIntent().getIntArrayExtra("storyIds"));
@@ -72,6 +77,7 @@ public class DetailActivity extends SecureActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        StoryRepository.initialize(this);
 
         ivStoryImage = findViewById(R.id.ivStoryImage);
         detailContent = findViewById(R.id.detailContent);
@@ -188,6 +194,9 @@ public class DetailActivity extends SecureActivity {
             intent.putExtra("place", story.getPlace());
             intent.putExtra("people", story.getPeople());
             intent.putExtra("memoryText", story.getMemoryText());
+            intent.putExtra("remoteStoryTitle", story.getRemoteStoryTitle());
+            intent.putExtra("remoteStoryContent", story.getRemoteStoryContent());
+            intent.putExtra("remoteStoryImageUri", story.getRemoteStoryImageUri());
             intent.putStringArrayListExtra("imageUris", story.getImageUris());
             editStoryLauncher.launch(intent);
         });
@@ -213,7 +222,11 @@ public class DetailActivity extends SecureActivity {
 
         currentImageIndex = index;
         ivStoryImage.setVisibility(ImageView.VISIBLE);
-        ivStoryImage.setImageURI(Uri.parse(imageUris.get(index)));
+        Glide.with(this)
+                .load(imageUris.get(index))
+                .placeholder(android.R.drawable.ic_menu_gallery)
+                .error(android.R.drawable.ic_menu_report_image)
+                .into(ivStoryImage);
         tvImageIndex.setText(getString(R.string.image_index_hint, currentImageIndex + 1, imageUris.size()));
         btnPrevImage.setEnabled(currentImageIndex > 0);
         btnNextImage.setEnabled(currentImageIndex < imageUris.size() - 1);
@@ -222,53 +235,8 @@ public class DetailActivity extends SecureActivity {
     }
 
     private void shareStory(PhotoStory story) {
-        ArrayList<Uri> imageUris = new ArrayList<>();
-        for (String imageUri : story.getImageUris()) {
-            if (imageUri != null && !imageUri.isEmpty()) {
-                imageUris.add(Uri.parse(imageUri));
-            }
-        }
-
-        Intent shareIntent;
-        if (imageUris.size() > 1) {
-            shareIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-            shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
-            shareIntent.setType("image/*");
-        } else if (imageUris.size() == 1) {
-            shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0));
-            shareIntent.setType("image/*");
-        } else {
-            shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-        }
-
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, story.getTitle().isEmpty() ? getString(R.string.no_title) : story.getTitle());
-        shareIntent.putExtra(Intent.EXTRA_TEXT, buildShareText(story));
-        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        if (!imageUris.isEmpty()) {
-            ClipData clipData = ClipData.newUri(getContentResolver(), "story_images", imageUris.get(0));
-            for (int i = 1; i < imageUris.size(); i++) {
-                clipData.addItem(new ClipData.Item(imageUris.get(i)));
-            }
-            shareIntent.setClipData(clipData);
-        }
-
-        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_story)));
-    }
-
-    private String buildShareText(PhotoStory story) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(story.getTitle().isEmpty() ? getString(R.string.no_title) : story.getTitle());
-        builder.append("\n");
-        builder.append(getString(R.string.detail_date, DateTimeUtils.formatDisplay(story.getDate())));
-        builder.append("\n");
-        builder.append(getString(R.string.detail_place, story.getPlace()));
-        builder.append("\n");
-        builder.append(getString(R.string.detail_people, story.getPeople()));
-        builder.append("\n\n");
-        builder.append(story.getMemoryText());
-        return builder.toString();
+        ArrayList<PhotoStory> shareItems = new ArrayList<>();
+        shareItems.add(story);
+        StoryShareHelper.shareStories(this, shareItems);
     }
 }

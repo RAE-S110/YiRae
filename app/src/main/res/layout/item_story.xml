@@ -6,30 +6,88 @@
     android:minHeight="96dp">
 
     <LinearLayout
-        android:id="@+id/deleteContainer"
-        android:layout_width="96dp"
+        android:id="@+id/actionContainer"
+        android:layout_width="288dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:background="@color/danger"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/ivDelete"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:contentDescription="@string/delete_story"
-            android:src="@android:drawable/ic_menu_delete"
-            android:tint="#FFFFFF" />
+        <LinearLayout
+            android:id="@+id/swipeFavoriteContainer"
+            android:layout_width="96dp"
+            android:layout_height="match_parent"
+            android:background="@color/sage"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:fontFamily="serif"
-            android:text="@string/delete"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp" />
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:contentDescription="@string/favorite_story"
+                android:src="@android:drawable/btn_star_big_on"
+                android:tint="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/tvSwipeFavoriteLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="serif"
+                android:text="@string/favorite_story"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/swipeShareContainer"
+            android:layout_width="96dp"
+            android:layout_height="match_parent"
+            android:background="@color/terracotta"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:contentDescription="@string/share_story"
+                android:src="@android:drawable/ic_menu_share"
+                android:tint="#FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="serif"
+                android:text="@string/share_story"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/deleteContainer"
+            android:layout_width="96dp"
+            android:layout_height="match_parent"
+            android:background="@color/danger"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/ivDelete"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:contentDescription="@string/delete_story"
+                android:src="@android:drawable/ic_menu_delete"
+                android:tint="#FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="serif"
+                android:text="@string/delete"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -93,6 +151,7 @@
                 android:textColor="@color/ink_soft"
                 android:textSize="14sp" />
         </LinearLayout>
+
     </LinearLayout>
 
 </FrameLayout>

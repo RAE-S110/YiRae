@@ -10,13 +10,16 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class StoryListAdapter extends BaseAdapter {
     public interface StoryActionListener {
         void onStorySelected(PhotoStory story);
-
+        void onStoryFavoriteToggle(PhotoStory story);
+        void onStoryShare(PhotoStory story);
         void onStoryDelete(PhotoStory story);
     }
 
@@ -90,16 +93,23 @@ public class StoryListAdapter extends BaseAdapter {
         String subtitle = story.buildSubtitle();
         holder.subtitle.setText(subtitle.isEmpty() ? parent.getContext().getString(R.string.no_story_summary) : subtitle);
         holder.favoriteBadge.setVisibility(story.isFavorite() ? View.VISIBLE : View.GONE);
+        holder.foreground.setAlpha(1f);
 
         if (story.getCoverImageUri().isEmpty()) {
             holder.image.setImageResource(android.R.drawable.ic_menu_gallery);
         } else {
-            holder.image.setImageURI(Uri.parse(story.getCoverImageUri()));
+            Glide.with(parent.getContext())
+                    .load(story.getCoverImageUri())
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .error(android.R.drawable.ic_menu_report_image)
+                    .into(holder.image);
         }
 
-        int deleteWidth = holder.deleteContainer.getLayoutParams().width;
-        holder.foreground.setTranslationX(story.getId() == openedStoryId && deleteEnabled ? -deleteWidth : 0f);
-        holder.deleteContainer.setVisibility(deleteEnabled ? View.VISIBLE : View.GONE);
+        int actionWidth = holder.actionContainer.getLayoutParams().width;
+        boolean canDelete = deleteEnabled;
+        holder.foreground.setTranslationX(story.getId() == openedStoryId && canDelete ? -actionWidth : 0f);
+        holder.actionContainer.setVisibility(canDelete ? View.VISIBLE : View.GONE);
+        holder.swipeFavoriteLabel.setText(story.isFavorite() ? R.string.unfavorite_story : R.string.favorite_story);
 
         holder.foreground.setOnClickListener(v -> {
             if (story.getId() == openedStoryId) {
@@ -108,11 +118,12 @@ public class StoryListAdapter extends BaseAdapter {
                 listener.onStorySelected(story);
             }
         });
-
+        holder.swipeFavoriteContainer.setOnClickListener(v -> listener.onStoryFavoriteToggle(story));
+        holder.swipeShareContainer.setOnClickListener(v -> listener.onStoryShare(story));
         holder.deleteContainer.setOnClickListener(v -> listener.onStoryDelete(story));
 
-        if (deleteEnabled) {
-            attachSwipeTouch(holder, story, deleteWidth);
+        if (canDelete) {
+            attachSwipeTouch(holder, story, actionWidth);
         } else {
             holder.foreground.setOnTouchListener(null);
         }
@@ -120,7 +131,7 @@ public class StoryListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private void attachSwipeTouch(ViewHolder holder, PhotoStory story, int deleteWidth) {
+    private void attachSwipeTouch(ViewHolder holder, PhotoStory story, int actionWidth) {
         holder.foreground.setOnTouchListener(new View.OnTouchListener() {
             private float downX;
             private float startTranslationX;
@@ -141,7 +152,8 @@ public class StoryListAdapter extends BaseAdapter {
                             v.getParent().requestDisallowInterceptTouchEvent(true);
                         }
                         if (moved) {
-                            float newTranslation = Math.max(-deleteWidth, Math.min(0f, startTranslationX + diffX));
+                            float minTranslation = deleteEnabled ? -actionWidth : 0f;
+                            float newTranslation = Math.max(minTranslation, Math.min(0f, startTranslationX + diffX));
                             v.setTranslationX(newTranslation);
                             return true;
                         }
@@ -152,9 +164,9 @@ public class StoryListAdapter extends BaseAdapter {
                             return false;
                         }
                         float finalTranslation = v.getTranslationX();
-                        if (Math.abs(finalTranslation) > deleteWidth / 2f) {
+                        if (finalTranslation < -actionWidth / 3f && deleteEnabled) {
                             openedStoryId = story.getId();
-                            v.setTranslationX(-deleteWidth);
+                            v.setTranslationX(-actionWidth);
                         } else {
                             if (openedStoryId == story.getId()) {
                                 openedStoryId = -1;
@@ -172,17 +184,25 @@ public class StoryListAdapter extends BaseAdapter {
 
     private static class ViewHolder {
         private final View foreground;
+        private final View actionContainer;
+        private final View swipeFavoriteContainer;
+        private final View swipeShareContainer;
         private final View deleteContainer;
         private final ImageView image;
         private final TextView favoriteBadge;
+        private final TextView swipeFavoriteLabel;
         private final TextView title;
         private final TextView subtitle;
 
         private ViewHolder(View view) {
             foreground = view.findViewById(R.id.storyForeground);
+            actionContainer = view.findViewById(R.id.actionContainer);
+            swipeFavoriteContainer = view.findViewById(R.id.swipeFavoriteContainer);
+            swipeShareContainer = view.findViewById(R.id.swipeShareContainer);
             deleteContainer = view.findViewById(R.id.deleteContainer);
             image = view.findViewById(R.id.ivItemImage);
             favoriteBadge = view.findViewById(R.id.tvFavoriteBadge);
+            swipeFavoriteLabel = view.findViewById(R.id.tvSwipeFavoriteLabel);
             title = view.findViewById(R.id.tvItemTitle);
             subtitle = view.findViewById(R.id.tvItemSubtitle);
         }

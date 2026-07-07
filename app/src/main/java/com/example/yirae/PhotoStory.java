@@ -12,8 +12,15 @@ public class PhotoStory {
     private final String memoryText;
     private final ArrayList<String> imageUris;
     private final boolean favorite;
+    private final String remoteStoryTitle;
+    private final String remoteStoryContent;
+    private final String remoteStoryImageUri;
 
     public PhotoStory(int id, String title, String date, String place, String people, String memoryText, List<String> imageUris, boolean favorite) {
+        this(id, title, date, place, people, memoryText, imageUris, favorite, "", "", "");
+    }
+
+    public PhotoStory(int id, String title, String date, String place, String people, String memoryText, List<String> imageUris, boolean favorite, String remoteStoryTitle, String remoteStoryContent, String remoteStoryImageUri) {
         this.id = id;
         this.title = title;
         this.date = date;
@@ -22,6 +29,9 @@ public class PhotoStory {
         this.memoryText = memoryText;
         this.imageUris = new ArrayList<>(imageUris);
         this.favorite = favorite;
+        this.remoteStoryTitle = remoteStoryTitle == null ? "" : remoteStoryTitle;
+        this.remoteStoryContent = remoteStoryContent == null ? "" : remoteStoryContent;
+        this.remoteStoryImageUri = remoteStoryImageUri == null ? "" : remoteStoryImageUri;
     }
 
     public int getId() {
@@ -54,6 +64,22 @@ public class PhotoStory {
 
     public boolean isFavorite() {
         return favorite;
+    }
+
+    public String getRemoteStoryTitle() {
+        return remoteStoryTitle;
+    }
+
+    public String getRemoteStoryContent() {
+        return remoteStoryContent;
+    }
+
+    public String getRemoteStoryImageUri() {
+        return remoteStoryImageUri;
+    }
+
+    public boolean hasRemoteStory() {
+        return !remoteStoryTitle.isEmpty() || !remoteStoryContent.isEmpty() || !remoteStoryImageUri.isEmpty();
     }
 
     public String getCoverImageUri() {

@@ -45,6 +45,14 @@ public class CalendarActivity extends SecureActivity {
             }
 
             @Override
+            public void onStoryFavoriteToggle(PhotoStory story) {
+            }
+
+            @Override
+            public void onStoryShare(PhotoStory story) {
+            }
+
+            @Override
             public void onStoryDelete(PhotoStory story) {
             }
         }, false);

@@ -17,3 +17,6 @@ local.properties
 .gradle-user-home/
 hs_err_pid*.log
 replay_pid*.log
+keystore/
+*.jks
+*.keystore
